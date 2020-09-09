@@ -26,7 +26,7 @@ require(lubridate) # version 1.7.9
 #---                                       ---#
 
 set.seed(2019)
-options(max.print=3000)
+options(max.print = 3000)
 
 #---                                            ---#
 ################# Load Scale Data #################
@@ -34,9 +34,7 @@ options(max.print=3000)
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) # set the wd to source file
 items <- read.csv("items.csv")
-basc3prsc <- read.csv("basc3prsc.csv") # load data
-basc3trsc <- read.csv("basc3trsc.csv") # load data
-data <- rbind(basc3prsc, basc3prsa) %>% rbind(basc3trsc) %>% rbind(basc3trsa)
+data <- read.csv("data.csv")
 
 #---                                                 ---#
 ################# Clean and Recode Data #################
@@ -103,6 +101,13 @@ for (i in na.omit(unique(items$trsc_comp))) {
 
 trsc.bsi.items <- filter(items, trsc_bsi == "y")[[1]]
 
+#---                                      ---#
+################# Split Data #################
+#---                                      ---#
+
+basc3prsc <- filter(data, Form == "PRS-C")
+basc3trsc <- filter(data, Form == "TRS-C")
+
 #---                                       ---#
 ################# Explore Data #################
 #---                                        ---#
@@ -120,20 +125,26 @@ ggplot(data = data, aes(x = AgeFactor, fill = Form)) +
 ggplot(data = data, aes(x = Gender, fill = Form)) +
   geom_bar(position = position_dodge(width = .7)) +
   geom_text(stat = "count", aes(label = ..count..), position = position_dodge(width = .7)) +
-  scale_y_continuous(name = "Number of Participants", breaks = seq.int(0,250,25), limits = c(0,250)) +
+  scale_y_continuous(name = "Number of Participants", breaks = seq.int(0,255,25), limits = c(0,255)) +
   scale_x_discrete(name = "Gender") 
-
-rm(data)
 
 #---                                          ---#
 ################# Reverse Items  #################
 #---                                          ---#
 
-prsc.reverse.items <- c("011","091","175","069","085","168","027","046","064","066","087","163")
-trsc.reverse.items <- c("001","021","064","022","032","139","020","098","144","055")
+prsc.reverse.items <- c("001","028","083","127") %>% # reverse attention problems to make negative
+  append(., c("069","085","168")) %>% # reverse functional communication to make positive
+  append(., c("027","046","064","066")) %>% # reverse activities of daily living to make positive
+  append(., c("087","163")) # reverse withdrawal to make negative
 
 basc3prsc <- basc3prsc %>% mutate_at(vars(paste0("basc3_r", prsc.reverse.items)),
-                                      funs(recode(., `1` = 4, `2` = 3, `3` = 2, `4` = 1))) 
+                                     funs(recode(., `1` = 4, `2` = 3, `3` = 2, `4` = 1)))
+
+trsc.reverse.items <- c("001","021","064") %>% # reverse Attention Problems to make negative
+  append(., c("022","032","139")) %>% # reverse Functional Communication to make positive
+  append(., c("020")) %>% # reverse Adaptability to make positive
+  append(., c("055")) %>% # reverse Learning Problems to make negative
+  append(., c("098","144")) # reverse Withdrawal to make negative
 
 basc3trsc <- basc3trsc %>% mutate_at(vars(paste0("basc3_r", trsc.reverse.items)),
                                      funs(recode(., `1` = 4, `2` = 3, `3` = 2, `4` = 1)))
@@ -320,7 +331,9 @@ lapply(prsc.alpha, function(x) { x$total })
 prsc.cfa <- list()
 for (i in names(prsc.subscale.items)) {
   y <- which(names(prsc.subscale.items) == i)
-  prsc.cfa[[i]] <- cfa(model = prsc.subscale.models[[i]], data = basc3prsc[prsc.subscale.items[[i]]], std.lv = TRUE, ordered = prsc.subscale.items[[i]])
+  prsc.cfa[[i]] <- cfa(model = prsc.subscale.models[[i]], 
+                       data = basc3prsc[prsc.subscale.items[[i]]],
+                       ordered = prsc.subscale.items[[i]])
   rm(y)
 }
 
@@ -332,7 +345,7 @@ lapply(prsc.cfa, function(x) {
 
 lapply(prsc.cfa, function(x) { 
   parameterEstimates(x, standardized = TRUE) %>%
-    filter(op == "=~") %>%
+    filter(op == "=~" | op == "~~") %>%
     dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
     kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 })
@@ -347,15 +360,14 @@ lapply(prsc.cfa, function(x) {
 
 prsc.internalizing.cfa <- cfa(model = prsc.internalizing.model, 
                               data = basc3prsc[prsc.composite.items$Internalizing], 
-                              ordered = prsc.composite.items$Internalizing,
-                              std.lv = TRUE)
+                              ordered = prsc.composite.items$Internalizing)
 
 prsc.internalizing.cfa
 
 fitMeasures(prsc.internalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(prsc.internalizing.cfa, standardized = TRUE) %>%
-  filter(op == "=~") %>%
+  filter(op == "=~" | op == "~~") %>%
   dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
@@ -365,15 +377,14 @@ parameterEstimates(prsc.internalizing.cfa, standardized = TRUE) %>%
 
 prsc.externalizing.cfa <- cfa(model = prsc.externalizing.model, 
                               data = basc3prsc[prsc.composite.items$Externalizing], 
-                              ordered = prsc.composite.items$Externalizing,
-                              std.lv = TRUE)
+                              ordered = prsc.composite.items$Externalizing)
 
 prsc.externalizing.cfa
 
 fitMeasures(prsc.externalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(prsc.externalizing.cfa, standardized = TRUE) %>%
-  filter(op == "=~") %>%
+  filter(op == "=~" | op == "~~") %>%
   dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
@@ -383,15 +394,14 @@ parameterEstimates(prsc.externalizing.cfa, standardized = TRUE) %>%
 
 prsc.adaptive.cfa <- cfa(model = prsc.adaptive.model, 
                          data = basc3prsc[prsc.composite.items$AdaptiveSkills], 
-                         ordered = prsc.composite.items$AdaptiveSkills,
-                         std.lv = TRUE)
+                         ordered = prsc.composite.items$AdaptiveSkills)
 
 prsc.adaptive.cfa
 
 fitMeasures(prsc.adaptive.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(prsc.adaptive.cfa, standardized = TRUE) %>%
-  filter(op == "=~") %>%
+  filter(op == "=~" | op == "~~") %>%
   dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
@@ -401,15 +411,14 @@ parameterEstimates(prsc.adaptive.cfa, standardized = TRUE) %>%
 
 prsc.bsi.cfa <- cfa(model = prsc.bsi.model, 
                     data = basc3prsc[prsc.bsi.items], 
-                    ordered = prsc.bsi.items,
-                    std.lv = TRUE)
+                    ordered = prsc.bsi.items)
 
 prsc.bsi.cfa
 
 fitMeasures(prsc.bsi.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(prsc.bsi.cfa, standardized = TRUE) %>%
-  filter(op == "=~") %>%
+  filter(op == "=~" | op == "~~") %>%
   dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
@@ -432,8 +441,7 @@ trsc.cfa <- list()
 for (i in names(trsc.subscale.items)) {
   y <- which(names(trsc.subscale.items) == i)
   trsc.cfa[[i]] <- cfa(model = trsc.subscale.models[[i]], 
-                       data = basc3trsc[trsc.subscale.items[[i]]], 
-                       std.lv = TRUE, 
+                       data = basc3trsc[trsc.subscale.items[[i]]],
                        ordered = trsc.subscale.items[[i]])
   rm(y)
 }
@@ -446,7 +454,7 @@ lapply(trsc.cfa, function(x) {
 
 lapply(trsc.cfa, function(x) { 
   parameterEstimates(x, standardized = TRUE) %>%
-    filter(op == "=~") %>%
+    filter(op == "=~" | op == "~~") %>%
     dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
     kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 })
@@ -461,15 +469,14 @@ lapply(trsc.cfa, function(x) {
 
 trsc.internalizing.cfa <- cfa(model = trsc.internalizing.model, 
                               data = basc3trsc[trsc.composite.items$Internalizing], 
-                              ordered = trsc.composite.items$Internalizing,
-                              std.lv = TRUE)
+                              ordered = trsc.composite.items$Internalizing)
 
 trsc.internalizing.cfa
 
 fitMeasures(trsc.internalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(trsc.internalizing.cfa, standardized = TRUE) %>%
-  filter(op == "=~") %>%
+  filter(op == "=~" | op == "~~") %>%
   dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
@@ -479,15 +486,14 @@ parameterEstimates(trsc.internalizing.cfa, standardized = TRUE) %>%
 
 trsc.externalizing.cfa <- cfa(model = trsc.externalizing.model, 
                               data = basc3trsc[trsc.composite.items$Externalizing], 
-                              ordered = trsc.composite.items$Externalizing,
-                              std.lv = TRUE)
+                              ordered = trsc.composite.items$Externalizing)
 
 trsc.externalizing.cfa
 
 fitMeasures(trsc.externalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(trsc.externalizing.cfa, standardized = TRUE) %>%
-  filter(op == "=~") %>%
+  filter(op == "=~" | op == "~~") %>%
   dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
@@ -497,8 +503,7 @@ parameterEstimates(trsc.externalizing.cfa, standardized = TRUE) %>%
 
 trsc.school.probs.cfa <- cfa(model = trsc.school.probs.model, 
                              data = basc3trsc[trsc.composite.items$SchoolProblems], 
-                             ordered = trsc.composite.items$SchoolProblems, 
-                             std.lv = TRUE)
+                             ordered = trsc.composite.items$SchoolProblems)
 
 trsc.school.probs.cfa
 
@@ -511,15 +516,14 @@ parameterEstimates(trsc.school.probs.cfa, standardized = TRUE) %>%
 
 trsc.school.probs.int.cfa <- cfa(model = trsc.school.probs.int.model, 
                                  data = basc3trsc[c(trsc.composite.items$SchoolProblems,trsc.composite.items$Internalizing)], 
-                                 ordered = c(trsc.composite.items$SchoolProblems,trsc.composite.items$Internalizing), 
-                                 std.lv = TRUE)
+                                 ordered = c(trsc.composite.items$SchoolProblems,trsc.composite.items$Internalizing))
 
 trsc.school.probs.int.cfa
 
 fitMeasures(trsc.school.probs.int.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(trsc.school.probs.int.cfa, standardized = TRUE) %>%
-  filter(op == "=~") %>%
+  filter(op == "=~" | op == "~~") %>%
   dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
@@ -529,15 +533,14 @@ parameterEstimates(trsc.school.probs.int.cfa, standardized = TRUE) %>%
 
 trsc.adaptive.cfa <- cfa(model = trsc.adaptive.model, 
                          data = basc3trsc[trsc.composite.items$AdaptiveSkills], 
-                         ordered = trsc.composite.items$AdaptiveSkills,
-                         std.lv = TRUE)
+                         ordered = trsc.composite.items$AdaptiveSkills)
 
 trsc.adaptive.cfa
 
 fitMeasures(trsc.adaptive.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(trsc.adaptive.cfa, standardized = TRUE) %>%
-  filter(op == "=~") %>%
+  filter(op == "=~" | op == "~~") %>%
   dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
@@ -547,14 +550,13 @@ parameterEstimates(trsc.adaptive.cfa, standardized = TRUE) %>%
 
 trsc.bsi.cfa <- cfa(model = trsc.bsi.model, 
                     data = basc3trsc[trsc.bsi.items], 
-                    ordered = trsc.bsi.items,
-                    std.lv = TRUE)
+                    ordered = trsc.bsi.items)
 
 trsc.bsi.cfa
 
 fitMeasures(trsc.bsi.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(trsc.bsi.cfa, standardized = TRUE) %>%
-  filter(op == "=~") %>%
+  filter(op == "=~" | op == "~~") %>%
   dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
