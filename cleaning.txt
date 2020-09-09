@@ -1,0 +1,30 @@
+Removed these columns manually:
+Examiner
+School
+GradeOther
+Custom1
+Custom2
+Custom3
+Custom4
+Langauge
+AdminTime
+RaterFirstName	
+RaterMI	
+RaterLastName	
+Position	
+PositionOther	
+TimeKnown
+RelationOther	
+ConcernVision	
+ConcernHearing	
+ConcernEatHabit	
+Enrollment	
+StrengthsComment	
+ConcernsComment
+
+Form 2 = basc3trsc
+Form 3 = basc3trsa
+Form 6 = basc3prsa
+Form 5 = basc3prsc
+Norm Group = General Combined
+
