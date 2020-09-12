@@ -346,7 +346,7 @@ lapply(prsc.cfa, function(x) {
 lapply(prsc.cfa, function(x) { 
   parameterEstimates(x, standardized = TRUE) %>%
     filter(op == "=~" | op == "~~") %>%
-    dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+    dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
     kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 })
 
@@ -368,7 +368,7 @@ fitMeasures(prsc.internalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rm
 
 parameterEstimates(prsc.internalizing.cfa, standardized = TRUE) %>%
   filter(op == "=~" | op == "~~") %>%
-  dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+  dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
 #---                                                            ---#
@@ -385,7 +385,7 @@ fitMeasures(prsc.externalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rm
 
 parameterEstimates(prsc.externalizing.cfa, standardized = TRUE) %>%
   filter(op == "=~" | op == "~~") %>%
-  dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+  dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
 #---                                                            ---#
@@ -402,7 +402,7 @@ fitMeasures(prsc.adaptive.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea",
 
 parameterEstimates(prsc.adaptive.cfa, standardized = TRUE) %>%
   filter(op == "=~" | op == "~~") %>%
-  dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+  dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
 #---                                                ---#
@@ -419,7 +419,7 @@ fitMeasures(prsc.bsi.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srm
 
 parameterEstimates(prsc.bsi.cfa, standardized = TRUE) %>%
   filter(op == "=~" | op == "~~") %>%
-  dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+  dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
 #---                                                      ---#
@@ -455,7 +455,7 @@ lapply(trsc.cfa, function(x) {
 lapply(trsc.cfa, function(x) { 
   parameterEstimates(x, standardized = TRUE) %>%
     filter(op == "=~" | op == "~~") %>%
-    dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+    dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
     kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 })
 
@@ -477,7 +477,7 @@ fitMeasures(trsc.internalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rm
 
 parameterEstimates(trsc.internalizing.cfa, standardized = TRUE) %>%
   filter(op == "=~" | op == "~~") %>%
-  dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+  dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
 #---                                                            ---#
@@ -494,7 +494,7 @@ fitMeasures(trsc.externalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rm
 
 parameterEstimates(trsc.externalizing.cfa, standardized = TRUE) %>%
   filter(op == "=~" | op == "~~") %>%
-  dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+  dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
 #---                                                            ---#
@@ -511,7 +511,7 @@ fitMeasures(trsc.school.probs.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rms
 
 parameterEstimates(trsc.school.probs.cfa, standardized = TRUE) %>%
   filter(op == "=~") %>%
-  dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+  dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
 trsc.school.probs.int.cfa <- cfa(model = trsc.school.probs.int.model, 
@@ -524,7 +524,7 @@ fitMeasures(trsc.school.probs.int.cfa, c("chisq", "df", "pvalue", "cfi", "tli", 
 
 parameterEstimates(trsc.school.probs.int.cfa, standardized = TRUE) %>%
   filter(op == "=~" | op == "~~") %>%
-  dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+  dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
 #---                                                            ---#
@@ -541,7 +541,7 @@ fitMeasures(trsc.adaptive.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea",
 
 parameterEstimates(trsc.adaptive.cfa, standardized = TRUE) %>%
   filter(op == "=~" | op == "~~") %>%
-  dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+  dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 
 #---                                                ---#
@@ -558,5 +558,5 @@ fitMeasures(trsc.bsi.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srm
 
 parameterEstimates(trsc.bsi.cfa, standardized = TRUE) %>%
   filter(op == "=~" | op == "~~") %>%
-  dplyr::select("Trait" = lhs, op, "Item" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Std. Beta" = std.all) %>%
+  dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
   kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
