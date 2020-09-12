@@ -1,10 +1,7 @@
-# CFA Analysis and IRT Analysis of the BASC-3
+# CFA Analysis of the BASC-3
 # Original code developed by Jake Kraska (Monash University)
 # Built on R 4.0.2 with R Studio 1.3.1073
-# requires file basc3prsa which contains 193 obs
-# requires file basc3prsc which contains 418 obs
-# requires file basc3trsa which contains 113 obs
-# requires file basc3trsc which contains 298 obs
+# requires file data with 736 obs of 401 variables
 # set the working directory to source file directory manually
 
 #---                                        ---#
@@ -350,10 +347,6 @@ lapply(prsc.cfa, function(x) {
     kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
 })
 
-lapply(prsc.cfa, function(x) {
-  modificationIndices(x)
-})
-
 #---                                                            ---#
 ################# CFA BASC-3 PRS-C Internalizing  #################
 #---                                                            ---#
@@ -457,10 +450,6 @@ lapply(trsc.cfa, function(x) {
     filter(op == "=~" | op == "~~") %>%
     dplyr::select("LHS" = lhs, op, "RHS" = rhs, "SE" = se, "Z" = z, "p-value" = pvalue, "Beta" = est, "Std. Beta" = std.all) %>%
     kable(digits = 3, format = "pandoc", caption = "Factor Loadings")
-})
-
-lapply(trsc.cfa, function(x) {
-  modificationIndices(x)
 })
 
 #---                                                            ---#
