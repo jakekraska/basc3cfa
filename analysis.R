@@ -146,6 +146,14 @@ trsc.reverse.items <- c("001","021","064") %>% # reverse Attention Problems to m
 basc3trsc <- basc3trsc %>% mutate_at(vars(paste0("basc3_r", trsc.reverse.items)),
                                      funs(recode(., `1` = 4, `2` = 3, `3` = 2, `4` = 1)))
 
+#---                                         ---#
+################# Descriptives  #################
+#---                                         ---#
+
+psych::describe(select(basc3prsc, ends_with("_t")), na.rm = TRUE)
+
+psych::describe(select(basc3trsc, ends_with("_t")), na.rm = TRUE)
+
 #---                                        ---#
 ################# CFA Models  #################
 #---                                        ---#
