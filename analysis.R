@@ -10,13 +10,14 @@
 
 require(plyr) # version 1.8.6
 require(ggplot2) # version 3.3.2
-require(psych) # version 2.0.7
-require(knitr) # version 1.29
+require(psych) # version 2.0.12
+require(knitr) # version 1.30
 require(lavaan) # version 0.6-7
-require(dplyr) # version 1.0.1
-require(tidyr) # version 1.1.1
+require(dplyr) # version 1.0.2
+require(tidyr) # version 1.1.2
 require(latticeExtra) # version 0.6-29
-require(lubridate) # version 1.7.9
+require(lubridate) # version 1.7.9.2
+require(tidySEM) # version 0.1.3
 
 #---                                       ---#
 ################# Set Options #################
@@ -117,13 +118,21 @@ ggplot(data = data, aes(x = AgeFactor, fill = Form)) +
   scale_y_continuous(name = "Number of Participants", breaks = seq.int(0,105,25), limits = c(0,105)) +
   scale_x_discrete(name = "Age") 
   
-# Gender distribution
+# Particiant Gender distribution
 
 ggplot(data = data, aes(x = Gender, fill = Form)) +
   geom_bar(position = position_dodge(width = .7)) +
   geom_text(stat = "count", aes(label = ..count..), position = position_dodge(width = .7)) +
   scale_y_continuous(name = "Number of Participants", breaks = seq.int(0,255,25), limits = c(0,255)) +
-  scale_x_discrete(name = "Gender") 
+  scale_x_discrete(name = "Participant Gender") 
+
+# Rater Gender distribution
+
+ggplot(data = data, aes(x = RaterGender, fill = Form)) +
+  geom_bar(position = position_dodge(width = .7)) +
+  geom_text(stat = "count", aes(label = ..count..), position = position_dodge(width = .7)) +
+  scale_y_continuous(name = "Number of Participants", breaks = seq.int(0,350,25), limits = c(0,350)) +
+  scale_x_discrete(name = "Rater Gender") 
 
 #---                                          ---#
 ################# Reverse Items  #################
@@ -344,6 +353,12 @@ for (i in names(prsc.subscale.items)) {
 
 lapply(prsc.cfa, function(x) {x})
 
+for (i in 1:length(prsc.cfa)) {
+  title <- paste(names(prsc.cfa[i]))
+  print(graph_sem(model = prsc.cfa[[i]], text_size = 2))
+  ggsave(filename = paste0(title,"_prs_cfa.png"), device = "png", path = "plots", dpi = 320, width = 50, height = 50, units = "cm")
+}
+
 lapply(prsc.cfa, function(x) { 
   fitMeasures(x, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 })
@@ -365,6 +380,9 @@ prsc.internalizing.cfa <- cfa(model = prsc.internalizing.model,
 
 prsc.internalizing.cfa
 
+print(graph_sem(model = prsc.internalizing.cfa, text_size = 2))
+ggsave(filename = paste0("Internalizing_prs_cfa.png"), device = "png", path = "plots", dpi = 320, width = 50, height = 50, units = "cm")
+
 fitMeasures(prsc.internalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(prsc.internalizing.cfa, standardized = TRUE) %>%
@@ -381,6 +399,9 @@ prsc.externalizing.cfa <- cfa(model = prsc.externalizing.model,
                               ordered = prsc.composite.items$Externalizing)
 
 prsc.externalizing.cfa
+
+print(graph_sem(model = prsc.externalizing.cfa, text_size = 2))
+ggsave(filename = paste0("Externalizing_prs_cfa.png"), device = "png", path = "plots", dpi = 320, width = 50, height = 50, units = "cm")
 
 fitMeasures(prsc.externalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
@@ -399,6 +420,9 @@ prsc.adaptive.cfa <- cfa(model = prsc.adaptive.model,
 
 prsc.adaptive.cfa
 
+print(graph_sem(model = prsc.adaptive.cfa, text_size = 2))
+ggsave(filename = paste0("Adaptive_prs_cfa.png"), device = "png", path = "plots", dpi = 320, width = 50, height = 50, units = "cm")
+
 fitMeasures(prsc.adaptive.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(prsc.adaptive.cfa, standardized = TRUE) %>%
@@ -415,6 +439,9 @@ prsc.bsi.cfa <- cfa(model = prsc.bsi.model,
                     ordered = prsc.bsi.items)
 
 prsc.bsi.cfa
+
+print(graph_sem(model = prsc.bsi.cfa, text_size = 2))
+ggsave(filename = paste0("BSI_prs_cfa.png"), device = "png", path = "plots", dpi = 320, width = 50, height = 50, units = "cm")
 
 fitMeasures(prsc.bsi.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
@@ -449,6 +476,12 @@ for (i in names(trsc.subscale.items)) {
 
 lapply(trsc.cfa, function(x) {x})
 
+for (i in 1:length(trsc.cfa)) {
+  title <- paste(names(trsc.cfa[i]))
+  print(graph_sem(model = trsc.cfa[[i]], text_size = 2))
+  ggsave(filename = paste0(title,"_trs_cfa.png"), device = "png", path = "plots", dpi = 320, width = 50, height = 50, units = "cm")
+}
+
 lapply(trsc.cfa, function(x) { 
   fitMeasures(x, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 })
@@ -470,6 +503,9 @@ trsc.internalizing.cfa <- cfa(model = trsc.internalizing.model,
 
 trsc.internalizing.cfa
 
+print(graph_sem(model = trsc.internalizing.cfa, text_size = 2))
+ggsave(filename = paste0("Internalizing_trs_cfa.png"), device = "png", path = "plots", dpi = 320, width = 50, height = 50, units = "cm")
+
 fitMeasures(trsc.internalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(trsc.internalizing.cfa, standardized = TRUE) %>%
@@ -486,6 +522,9 @@ trsc.externalizing.cfa <- cfa(model = trsc.externalizing.model,
                               ordered = trsc.composite.items$Externalizing)
 
 trsc.externalizing.cfa
+
+print(graph_sem(model = trsc.externalizing.cfa, text_size = 2))
+ggsave(filename = paste0("Externalising_trs_cfa.png"), device = "png", path = "plots", dpi = 320, width = 50, height = 50, units = "cm")
 
 fitMeasures(trsc.externalizing.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
@@ -517,6 +556,9 @@ trsc.school.probs.int.cfa <- cfa(model = trsc.school.probs.int.model,
 
 trsc.school.probs.int.cfa
 
+print(graph_sem(model = trsc.school.probs.cfa, text_size = 2))
+ggsave(filename = paste0("SchoolProblems_trs_cfa.png"), device = "png", path = "plots", dpi = 320, width = 50, height = 50, units = "cm")
+
 fitMeasures(trsc.school.probs.int.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(trsc.school.probs.int.cfa, standardized = TRUE) %>%
@@ -534,6 +576,9 @@ trsc.adaptive.cfa <- cfa(model = trsc.adaptive.model,
 
 trsc.adaptive.cfa
 
+print(graph_sem(model = trsc.adaptive.cfa, text_size = 2))
+ggsave(filename = paste0("Adaptive_trs_cfa.png"), device = "png", path = "plots", dpi = 320, width = 50, height = 50, units = "cm")
+
 fitMeasures(trsc.adaptive.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
 parameterEstimates(trsc.adaptive.cfa, standardized = TRUE) %>%
@@ -550,6 +595,9 @@ trsc.bsi.cfa <- cfa(model = trsc.bsi.model,
                     ordered = trsc.bsi.items)
 
 trsc.bsi.cfa
+
+print(graph_sem(model = trsc.bsi.cfa, text_size = 2))
+ggsave(filename = paste0("BSI_trs_cfa.png"), device = "png", path = "plots", dpi = 320, width = 50, height = 50, units = "cm")
 
 fitMeasures(trsc.bsi.cfa, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 
