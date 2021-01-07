@@ -71,6 +71,8 @@ data$RaterGender <- addNA(as.factor(recode(data$RaterGender,
                                            "2" = "Female", 
                                            "3" = "Other")))
 
+names(data) <- names(data %>% setNames(gsub("basc3_","", names(.))))
+
 #---                                            ---#
 ################# Create Item Sets #################
 #---                                            ---#
@@ -143,7 +145,7 @@ prsc.reverse.items <- c("001","028","083","127") %>% # reverse attention problem
   append(., c("027","046","064","066")) %>% # reverse activities of daily living to make positive
   append(., c("087","163")) # reverse withdrawal to make negative
 
-basc3prsc <- basc3prsc %>% mutate_at(vars(paste0("basc3_r", prsc.reverse.items)),
+basc3prsc <- basc3prsc %>% mutate_at(vars(paste0("r", prsc.reverse.items)),
                                      funs(recode(., `1` = 4, `2` = 3, `3` = 2, `4` = 1)))
 
 trsc.reverse.items <- c("001","021","064") %>% # reverse Attention Problems to make negative
@@ -152,7 +154,7 @@ trsc.reverse.items <- c("001","021","064") %>% # reverse Attention Problems to m
   append(., c("055")) %>% # reverse Learning Problems to make negative
   append(., c("098","144")) # reverse Withdrawal to make negative
 
-basc3trsc <- basc3trsc %>% mutate_at(vars(paste0("basc3_r", trsc.reverse.items)),
+basc3trsc <- basc3trsc %>% mutate_at(vars(paste0("r", trsc.reverse.items)),
                                      funs(recode(., `1` = 4, `2` = 3, `3` = 2, `4` = 1)))
 
 #---                                         ---#
