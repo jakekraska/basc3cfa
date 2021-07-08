@@ -1,6 +1,6 @@
 # Confirmatory Factor Analyses of the Behavior Assessment System for Children – Third Edition Among an Australian Sample
 
-This repository includes the data and code required for analysis in the **Confirmatory Factor Analyses of the Behavior Assessment System for Children – Third Edition Among an Australian Sample** manuscript. This manuscript is currently under peer review.
+This repository includes the data and code required for analysis in the **Confirmatory Factor Analyses of the Behavior Assessment System for Children – Third Edition Among an Australian Sample** manuscript. This manuscript was accepted for publication 3rd March 2021: https://www.tandfonline.com/doi/abs/10.1080/20590776.2021.1907181
 
 ## Abstract
 
@@ -22,7 +22,7 @@ All correspondence regarding this analysis and manuscript can be directed to [An
 
 * Clone this repo to your local machine using https://github.com/jakekraska/basc3cfa
 * Open analysis.R in your preferred R IDE
-* Set the working directory to the source file within the IDE or using `setwd(dirname(rstudioapi::getActiveDocumentContext($path`
+* Set the working directory to the source file within the IDE or using `setwd(dirname(rstudioapi::getActiveDocumentContext($path)`
 * Install the necessary packages using the `install.packages("PACKAGENAME")` command
     * plyr version 1.8.6
     * ggplot2 version 3.3.2
